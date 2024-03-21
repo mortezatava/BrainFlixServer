@@ -4,6 +4,7 @@ require('dotenv').config();
 const fs = require("fs");
 const port = process.env.PORT;
 const cors = require('cors');
+const uniqid = require('uniqid');
 
 app.use(cors());
 app.use(express.json());
@@ -16,12 +17,7 @@ app.use((_req, _res, next) => {
     next();
 });
 
-app.use((req, res, next) => {
-    if (req.method === "POST" && req.headers["content-type"] !== "application/json") {
-        return res.status(400).send("Hey, you need to give me proper JSON");
-    }
-    next();
-});
+
 
 app.get('/', (req, res) => {
     return res.send('I am working');
@@ -50,16 +46,32 @@ app.get("/videos/:id", (req, res) => {
 
 });
 
-app.post("/videos", (_req, res) => {
-    // Make a new cat with a unique ID
+app.use((req, res, next) => {
+    if (req.method === "POST" && req.headers["content-type"] !== "application/json") {
+        return res.status(400).send("Hey, you need to give me proper JSON");
+    }
+    next();
+});
+
+app.post("/videos", (req, res) => {
+    console.log("hellos")
+    console.log(req.body.title)
+
     const newVideo = {
         id: uniqid(),
-        name: _req.body.name,
-        comment: _req.body.comment,
-
+        title: req.body.title,
+        description: req.body.description,
+        channel: "Mortezas channel",
+        image: "https://unit-3-project-api-0a5620414506.herokuapp.com/images/image8.jpg",
+        "views": "3,092,284",
+        "likes": "75,985",
+        "duration": "49:20",
+        "video": "https://unit-3-project-api-0a5620414506.herokuapp.com/stream",
+        "timestamp": 1701497862000,
+        "comments": [],
     };
 
-    const allVideos = readCatsData();
+    const allVideos = readVideosData();
 
     allVideos.push(newVideo);
 
@@ -67,7 +79,7 @@ app.post("/videos", (_req, res) => {
 
 
     res.status(201).json(newVideo);
-    res.json(readCatsData());
+
 });
 
 
