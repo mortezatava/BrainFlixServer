@@ -26,23 +26,49 @@ app.use((req, res, next) => {
 app.get('/', (req, res) => {
     return res.send('I am working');
 })
-// app.get('/videos', function (req, res) {
-//     res.json(videos);
-// });
 
-// app.post('/videos', function (req, res) {
+function readVideosData() {
+    const videosData = fs.readFileSync("./files/video-details.json");
+    const parsedData = JSON.parse(videosData);
+    return parsedData;
+}
 
-//     const { title, channel } = req.body;
-//     const newVideos = {
-//         id: uuidv4(),
-//         title,
-//         channel,
-//     };
-//     videos.push(newVideos);
-//     res.json(newVideos);
-// });
+app.get("/videos", (req, res) => {
+    res.json(readVideosData());
+});
+
+app.get("/videos/:id", (req, res) => {
 
 
+    const videosData = fs.readFileSync("./files/video-details.json");
+
+    const parsedData = JSON.parse(videosData);
+
+    const filteredData = parsedData.filter((video) => video.id == req.params.id)
+
+    res.json(filteredData);
+
+});
+
+app.post("/videos", (_req, res) => {
+    // Make a new cat with a unique ID
+    const newVideo = {
+        id: uniqid(),
+        name: _req.body.name,
+        comment: _req.body.comment,
+
+    };
+
+    const allVideos = readCatsData();
+
+    allVideos.push(newVideo);
+
+    fs.writeFileSync("./files/video-details.json", JSON.stringify(allVideos));
+
+
+    res.status(201).json(newVideo);
+    res.json(readCatsData());
+});
 
 
 app.listen(port, () => {
