@@ -8,21 +8,14 @@ const uniqid = require('uniqid');
 
 app.use(cors());
 app.use(express.json());
-
 app.use("/videos", express.static("files"));
-
-
 app.use((_req, _res, next) => {
     console.log("Middleware running");
     next();
 });
-
-
-
 app.get('/', (req, res) => {
     return res.send('I am working');
 })
-
 function readVideosData() {
     const videosData = fs.readFileSync("./files/video-details.json");
     const parsedData = JSON.parse(videosData);
@@ -34,18 +27,11 @@ app.get("/videos", (req, res) => {
 });
 
 app.get("/videos/:id", (req, res) => {
-
-
     const videosData = fs.readFileSync("./files/video-details.json");
-
     const parsedData = JSON.parse(videosData);
-
     const filteredData = parsedData.filter((video) => video.id == req.params.id)
-
     res.json(filteredData);
-
 });
-
 app.use((req, res, next) => {
     if (req.method === "POST" && req.headers["content-type"] !== "application/json") {
         return res.status(400).send("Hey, you need to give me proper JSON");
@@ -61,7 +47,7 @@ app.post("/videos", (req, res) => {
         id: uniqid(),
         title: req.body.title,
         description: req.body.description,
-        channel: "Mortezas channel",
+        channel: "Morteza's channel",
         image: "https://unit-3-project-api-0a5620414506.herokuapp.com/images/image8.jpg",
         "views": "3,092,284",
         "likes": "75,985",
